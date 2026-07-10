@@ -38,4 +38,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: wfreerdp-windows-build
-          path: "build-mingw/**/*.exe"
+          path: "build-mingw/install/bin/"
