@@ -165,8 +165,21 @@ static void sdl_term_handler([[maybe_unused]] int signum, [[maybe_unused]] const
 
 	try
 	{
+		Uint64 last_idle_tick = SDL_GetTicks();
+
 		while (!sdl->shallAbort())
 		{
+			Uint64 current_tick = SDL_GetTicks();
+            if ((current_tick - last_idle_tick) > 540000) // <-- 540 000 мс = 9 минут
+            {
+                last_idle_tick = current_tick;
+                if (sdl->context() && sdl->context()->input)
+                {
+                    // Отправляем фейковое движение мыши: X=0, Y=0
+                    freerdp_input_send_mouse_event(sdl->context()->input, PTR_FLAGS_MOVE, 0, 0);
+                }
+            }
+
 			SDL_Event windowEvent = {};
 			while (!sdl->shallAbort() && SDL_WaitEventTimeout(nullptr, 1000))
 			{
