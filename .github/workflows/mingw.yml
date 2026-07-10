@@ -33,3 +33,9 @@ jobs:
       - name: "Run mingw [static] build..."
         run: |
           ./scripts/mingw.sh -c -s --clean-first
+      
+      - name: "Upload wfreerdp Artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: wfreerdp-windows-build
+          path: "build-mingw/**/*.exe"
