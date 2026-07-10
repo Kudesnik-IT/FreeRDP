@@ -1088,8 +1088,19 @@ static DWORD WINAPI wf_client_thread(LPVOID lpParam)
 	rdpSettings* settings = context->settings;
 	WINPR_ASSERT(settings);
 
+	DWORD last_idle_tick = GetTickCount();
+
 	while (!freerdp_shall_disconnect_context(instance->context))
 	{
+		DWORD current_tick = GetTickCount();
+		// 540000 миллисекунд = 9 минут
+		if ((current_tick - last_idle_tick) > 540000) 
+		{
+			last_idle_tick = current_tick;
+			// Отправляем фейковое движение мыши: X=0, Y=0
+			freerdp_input_send_mouse_event(context->input, PTR_FLAGS_MOVE, 0, 0); 
+		}
+
 		HANDLE handles[MAXIMUM_WAIT_OBJECTS] = WINPR_C_ARRAY_INIT;
 		DWORD nCount = 0;
 
